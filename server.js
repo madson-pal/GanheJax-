@@ -10,15 +10,29 @@ function layout(content) {
     <style>
       body {
         margin: 0;
-        font-family: Arial;
-        background: #0f172a;
+        font-family: 'Segoe UI', Arial;
+        background: #0b1220;
         color: white;
       }
 
-      .top {
-        background: #111827;
+      .header {
+        display: flex;
+        justify-content: space-between;
         padding: 15px;
-        text-align: center;
+        background: #111827;
+        align-items: center;
+      }
+
+      .logo {
+        font-weight: bold;
+        font-size: 18px;
+      }
+
+      .saldo-mini {
+        background: #22c55e;
+        padding: 8px 12px;
+        border-radius: 8px;
+        color: black;
         font-weight: bold;
       }
 
@@ -27,42 +41,42 @@ function layout(content) {
         padding-bottom: 80px;
       }
 
+      .card {
+        background: #1f2937;
+        border-radius: 15px;
+        padding: 15px;
+        margin-top: 15px;
+      }
+
       .saldo-box {
         background: linear-gradient(135deg, #22c55e, #16a34a);
-        padding: 20px;
         border-radius: 15px;
+        padding: 20px;
         text-align: center;
       }
 
       .saldo {
-        font-size: 28px;
+        font-size: 30px;
         font-weight: bold;
       }
 
-      .section {
-        margin-top: 20px;
-      }
-
-      .card {
-        background: #1e293b;
-        padding: 15px;
-        border-radius: 10px;
-        margin-top: 10px;
+      .grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin-top: 15px;
       }
 
       .btn {
-        display: block;
-        width: 100%;
         padding: 15px;
-        margin-top: 10px;
         border-radius: 10px;
         text-align: center;
         text-decoration: none;
         font-weight: bold;
       }
 
-      .btn-blue { background: #3b82f6; color: white; }
-      .btn-green { background: #22c55e; color: black; }
+      .blue { background: #3b82f6; }
+      .green { background: #22c55e; color: black; }
 
       .nav {
         position: fixed;
@@ -81,19 +95,23 @@ function layout(content) {
       }
     </style>
   </head>
+
   <body>
 
-    <div class="top">GanheJa 🚀</div>
+    <div class="header">
+      <div class="logo">GanheJa 🚀</div>
+      <div class="saldo-mini">R$ 0,00</div>
+    </div>
 
     <div class="container">
       ${content}
     </div>
 
     <div class="nav">
-      <a href="/">🏠 Início</a>
-      <a href="/tarefas">💰 Tarefas</a>
-      <a href="/saque">💸 Saque</a>
-      <a href="/suporte">📞 Suporte</a>
+      <a href="/">🏠</a>
+      <a href="/tarefas">💰</a>
+      <a href="/saque">💸</a>
+      <a href="/suporte">📞</a>
     </div>
 
   </body>
@@ -109,15 +127,20 @@ app.get('/', (req, res) => {
       <div class="saldo">R$ 0,00</div>
     </div>
 
-    <div class="section">
-      <a class="btn btn-blue" href="/tarefas">Fazer tarefas</a>
-      <a class="btn btn-green" href="/saque">Sacar dinheiro</a>
+    <div class="grid">
+      <a class="btn blue" href="/tarefas">Tarefas</a>
+      <a class="btn green" href="/saque">Sacar</a>
     </div>
 
-    <div class="section">
-      <div class="card">✔ Ganhe respondendo pesquisas</div>
-      <div class="card">✔ Tarefas todos os dias</div>
-      <div class="card">✔ Saque via PIX em breve</div>
+    <div class="card">
+      <h3>Ganhe dinheiro fácil</h3>
+      <p>Responda pesquisas e complete tarefas.</p>
+    </div>
+
+    <div class="card">
+      <p>✔ Atualizações diárias</p>
+      <p>✔ Saque rápido</p>
+      <p>✔ Plataforma segura</p>
     </div>
   `));
 });
@@ -127,12 +150,7 @@ app.get('/tarefas', (req, res) => {
   const url = "https://offers.cpx-research.com/index.php?app_id=32644&ext_user_id=1";
 
   res.send(layout(`
-    <h2>Tarefas disponíveis</h2>
-
-    <div class="card">
-      <p>💰 Pesquisas remuneradas</p>
-    </div>
-
+    <h3>Tarefas disponíveis</h3>
     <iframe src="${url}" width="100%" height="600"></iframe>
   `));
 });
@@ -140,9 +158,8 @@ app.get('/tarefas', (req, res) => {
 // SAQUE
 app.get('/saque', (req, res) => {
   res.send(layout(`
-    <h2>Saque</h2>
-
     <div class="card">
+      <h3>Saque</h3>
       <p>Saldo: R$ 0,00</p>
       <p>Mínimo: R$ 25,00</p>
       <button style="width:100%; padding:15px; border:none; border-radius:10px; background:#22c55e;">
@@ -155,20 +172,13 @@ app.get('/saque', (req, res) => {
 // SUPORTE
 app.get('/suporte', (req, res) => {
   res.send(layout(`
-    <h2>Suporte</h2>
-
     <div class="card">
+      <h3>Suporte</h3>
       <p>Email: suporte@ganheja.com</p>
-      <p>Resposta em até 24h</p>
-    </div>
-
-    <div class="card">
-      <p>Perguntas frequentes:</p>
-      <p>- Como sacar?</p>
-      <p>- Como ganhar?</p>
+      <p>Tempo de resposta: até 24h</p>
     </div>
   `));
 });
 
-app.listen(3000, () => console.log("Rodando"));
+app.listen(3000);
         
