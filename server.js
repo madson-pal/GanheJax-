@@ -1,4 +1,3 @@
-;
 const express = require('express');
 const app = express();
 
@@ -12,57 +11,83 @@ app.get('/', (req, res) => {
       body {
         margin: 0;
         font-family: Arial;
-        background: linear-gradient(135deg, #0f172a, #1e293b);
+        background: #0f172a;
         color: white;
       }
-      .container {
-        padding: 20px;
+
+      .header {
+        background: #111827;
+        padding: 15px;
         text-align: center;
+        font-size: 20px;
+        font-weight: bold;
       }
-      h1 {
-        font-size: 32px;
-      }
-      .card {
-        background: #1e293b;
+
+      .saldo-box {
+        background: linear-gradient(135deg, #22c55e, #16a34a);
+        margin: 20px;
         padding: 20px;
         border-radius: 15px;
-        margin-top: 20px;
+        text-align: center;
       }
+
+      .saldo {
+        font-size: 28px;
+        font-weight: bold;
+      }
+
+      .container {
+        padding: 20px;
+      }
+
       .btn {
         display: block;
-        margin: 15px auto;
+        width: 100%;
         padding: 15px;
-        background: #22c55e;
-        color: black;
-        text-decoration: none;
+        margin-top: 15px;
         border-radius: 10px;
+        text-align: center;
+        text-decoration: none;
         font-weight: bold;
-        width: 80%;
       }
-      .btn2 {
+
+      .btn-tarefa {
         background: #3b82f6;
         color: white;
       }
-      .saldo {
-        font-size: 24px;
-        margin-top: 10px;
-        color: #22c55e;
+
+      .btn-saque {
+        background: #22c55e;
+        color: black;
+      }
+
+      .card {
+        background: #1e293b;
+        padding: 15px;
+        border-radius: 10px;
+        margin-top: 15px;
       }
     </style>
   </head>
   <body>
+
+    <div class="header">GanheJa 🚀</div>
+
+    <div class="saldo-box">
+      <p>Seu saldo</p>
+      <div class="saldo">R$ 0,00</div>
+    </div>
+
     <div class="container">
-      <h1>GanheJa 🚀</h1>
-      <p>Ganhe dinheiro fazendo tarefas simples</p>
+      <a class="btn btn-tarefa" href="/tarefas">💰 Fazer tarefas</a>
+      <a class="btn btn-saque" href="/saque">💸 Sacar dinheiro</a>
 
       <div class="card">
-        <p>Seu saldo:</p>
-        <div class="saldo">R$ 0,00</div>
+        <p>✔ Ganhe respondendo pesquisas</p>
+        <p>✔ Saque via PIX (em breve)</p>
       </div>
-
-      <a class="btn" href="/tarefas">💰 Fazer tarefas</a>
-      <a class="btn btn2" href="/saque">💸 Sacar dinheiro</a>
     </div>
+
   </body>
   </html>
   `);
@@ -76,12 +101,20 @@ app.get('/tarefas', (req, res) => {
   <head>
     <title>Tarefas</title>
     <style>
-      body { margin:0; font-family:Arial; }
-      h1 { text-align:center; }
+      body {
+        margin: 0;
+        font-family: Arial;
+      }
+      .top {
+        background: #111827;
+        color: white;
+        padding: 15px;
+        text-align: center;
+      }
     </style>
   </head>
   <body>
-    <h1>Tarefas disponíveis</h1>
+    <div class="top">Tarefas disponíveis</div>
     <iframe src="${url}" width="100%" height="700"></iframe>
   </body>
   </html>
@@ -101,11 +134,13 @@ app.get('/saque', (req, res) => {
         text-align: center;
         padding: 20px;
       }
+
       .card {
         background: #1e293b;
         padding: 20px;
         border-radius: 15px;
       }
+
       button {
         margin-top: 20px;
         padding: 15px;
@@ -113,14 +148,16 @@ app.get('/saque', (req, res) => {
         border: none;
         border-radius: 10px;
         font-weight: bold;
+        width: 100%;
       }
     </style>
   </head>
   <body>
     <h1>Saque</h1>
+
     <div class="card">
       <p>Saldo disponível: R$ 0,00</p>
-      <p>Mínimo para saque: R$ 25,00</p>
+      <p>Mínimo: R$ 25,00</p>
       <button disabled>Solicitar saque</button>
     </div>
   </body>
