@@ -9,12 +9,13 @@ app.get('/', (req, res) => {
   res.send(`
   <html>
   <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GanheJa</title>
 
     <style>
+      * { margin:0; padding:0; box-sizing:border-box; font-family:Arial; }
+
       body {
-        margin:0;
-        font-family: Arial;
         background:#0f172a;
         color:white;
       }
@@ -22,7 +23,6 @@ app.get('/', (req, res) => {
       header {
         display:flex;
         justify-content:space-between;
-        align-items:center;
         padding:15px;
         background:#020617;
       }
@@ -31,27 +31,23 @@ app.get('/', (req, res) => {
         background:#22c55e;
         padding:8px 12px;
         border-radius:10px;
-        font-weight:bold;
       }
 
       .container {
-        padding:10px;
-        padding-bottom:80px;
+        padding:15px;
+        padding-bottom:90px;
       }
 
       iframe {
         width:100%;
-        height:70vh;
+        height:75vh;
         border:none;
         border-radius:15px;
         background:white;
       }
 
-      .hidden {
-        display:none;
-      }
+      .hidden { display:none; }
 
-      /* MENU INFERIOR */
       .menu {
         position:fixed;
         bottom:0;
@@ -59,24 +55,27 @@ app.get('/', (req, res) => {
         background:#020617;
         display:flex;
         justify-content:space-around;
-        padding:10px 0;
+        padding:10px;
       }
 
       .menu button {
         background:none;
         border:none;
         color:white;
-        font-size:14px;
-      }
-
-      .active {
-        color:#22c55e;
       }
 
       .card {
         background:#1e293b;
         padding:15px;
-        border-radius:15px;
+        border-radius:10px;
+        margin-top:10px;
+      }
+
+      input {
+        width:100%;
+        padding:10px;
+        border:none;
+        border-radius:10px;
         margin-top:10px;
       }
 
@@ -86,74 +85,132 @@ app.get('/', (req, res) => {
         border:none;
         border-radius:10px;
         width:100%;
-        color:white;
-        font-weight:bold;
         margin-top:10px;
+        color:white;
       }
-    </style>
 
+      /* LOGIN */
+      #login {
+        position:fixed;
+        width:100%;
+        height:100%;
+        background:#0f172a;
+        display:flex;
+        flex-direction:column;
+        justify-content:center;
+        align-items:center;
+      }
+
+      /* LOADING */
+      #loading {
+        position:fixed;
+        width:100%;
+        height:100%;
+        background:#0f172a;
+        display:flex;
+        justify-content:center;
+        align-items:center;
+        font-size:20px;
+      }
+
+    </style>
   </head>
 
   <body>
 
-    <header>
-      <h3>GanheJa 🚀</h3>
-      <div class="saldo">R$ 0,00</div>
-    </header>
+    <div id="loading">Carregando...</div>
 
-    <div class="container">
-
-      <!-- TELA TAREFAS -->
-      <div id="tarefas">
-        <h3>💰 Ganhe dinheiro</h3>
-        <iframe src="${url}"></iframe>
-      </div>
-
-      <!-- TELA SAQUE -->
-      <div id="saque" class="hidden">
-        <h3>💸 Sacar dinheiro</h3>
-
-        <div class="card">
-          <p>Saldo disponível: <b>R$ 0,00</b></p>
-
-          <input placeholder="Sua chave PIX" style="width:100%; padding:10px; border-radius:10px; border:none; margin-top:10px;">
-          
-          <button class="btn">Solicitar saque</button>
-        </div>
-      </div>
-
-      <!-- TELA PERFIL -->
-      <div id="perfil" class="hidden">
-        <h3>👤 Minha conta</h3>
-
-        <div class="card">
-          <p>ID do usuário: 1</p>
-          <p>Status: Ativo</p>
-        </div>
-      </div>
-
+    <div id="login" class="hidden">
+      <h2>GanheJa 🚀</h2>
+      <input id="user" placeholder="Digite seu nome">
+      <button class="btn" onclick="entrar()">Entrar</button>
     </div>
 
-    <!-- MENU -->
-    <div class="menu">
-      <button onclick="trocar('tarefas')" class="active" id="btn-tarefas">🏠</button>
-      <button onclick="trocar('saque')" id="btn-saque">💰</button>
-      <button onclick="trocar('perfil')" id="btn-perfil">👤</button>
+    <div id="app" class="hidden">
+
+      <header>
+        <h3>GanheJa</h3>
+        <div class="saldo" id="saldo">R$ 0,00</div>
+      </header>
+
+      <div class="container">
+
+        <!-- TAREFAS -->
+        <div id="tarefas">
+          <iframe src="${url}"></iframe>
+        </div>
+
+        <!-- SAQUE -->
+        <div id="saque" class="hidden">
+          <div class="card">
+            <p>Saldo: <span id="saldo2">R$ 0,00</span></p>
+            <input placeholder="Chave PIX">
+            <button class="btn" onclick="sacar()">Solicitar saque</button>
+          </div>
+        </div>
+
+        <!-- PERFIL -->
+        <div id="perfil" class="hidden">
+          <div class="card">
+            <p>Usuário: <span id="nome"></span></p>
+            <p>Ganhos: R$ <span id="ganho">0</span></p>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="menu">
+        <button onclick="trocar('tarefas')">🏠</button>
+        <button onclick="trocar('saque')">💰</button>
+        <button onclick="trocar('perfil')">👤</button>
+      </div>
+
     </div>
 
     <script>
-      function trocar(tela) {
+      let saldo = localStorage.getItem('saldo') || 0;
+      let nome = localStorage.getItem('nome');
+
+      setTimeout(() => {
+        document.getElementById('loading').style.display = 'none';
+
+        if(nome){
+          iniciarApp();
+        } else {
+          document.getElementById('login').classList.remove('hidden');
+        }
+
+      }, 1500);
+
+      function entrar(){
+        const user = document.getElementById('user').value;
+        localStorage.setItem('nome', user);
+        iniciarApp();
+      }
+
+      function iniciarApp(){
+        document.getElementById('login').classList.add('hidden');
+        document.getElementById('app').classList.remove('hidden');
+
+        document.getElementById('nome').innerText = nome;
+        atualizarSaldo();
+      }
+
+      function atualizarSaldo(){
+        document.getElementById('saldo').innerText = "R$ " + saldo;
+        document.getElementById('saldo2').innerText = "R$ " + saldo;
+      }
+
+      function sacar(){
+        alert("Pedido de saque enviado!");
+      }
+
+      function trocar(tela){
         document.getElementById('tarefas').classList.add('hidden');
         document.getElementById('saque').classList.add('hidden');
         document.getElementById('perfil').classList.add('hidden');
 
         document.getElementById(tela).classList.remove('hidden');
-
-        document.getElementById('btn-tarefas').classList.remove('active');
-        document.getElementById('btn-saque').classList.remove('active');
-        document.getElementById('btn-perfil').classList.remove('active');
-
-        document.getElementById('btn-' + tela).classList.add('active');
       }
     </script>
 
@@ -162,4 +219,4 @@ app.get('/', (req, res) => {
   `);
 });
 
-app.listen(3000, () => console.log("Rodando"));
+app.listen(3000);
